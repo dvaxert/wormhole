@@ -1,30 +1,34 @@
 # Create and configure a library target
 
 # Define the library type
-if(WORMHOLE_BUILD_SHARED_LIBS)
-    set(WORMHOLE_LIBRARY_TYPE SHARED)
-else()
-    set(WORMHOLE_LIBRARY_TYPE STATIC)
-endif()
+if (WORMHOLE_BUILD_SHARED_LIBS)
+    set (WORMHOLE_LIBRARY_TYPE SHARED)
+else ()
+    set (WORMHOLE_LIBRARY_TYPE STATIC)
+endif ()
 
-add_library(wormhole ${WORMHOLE_LIBRARY_TYPE})
-message(STATUS "WORMHOLE_LIBRARY_TYPE - ${WORMHOLE_LIBRARY_TYPE}")
+add_library (wormhole ${WORMHOLE_LIBRARY_TYPE})
+message (STATUS "WORMHOLE_LIBRARY_TYPE - ${WORMHOLE_LIBRARY_TYPE}")
 
 # Describing the list of source files
 
-set(WORMHOLE_PUBLIC_HEADERS
-    include/wormhole/wormhole.h
+NestingFileSearch (WORMHOLE_PUBLIC_HEADERS
+    EXTENSION ".h"
+    DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include"
 )
 
-set(WORMHOLE_PRIVATE_HEADERS
-    include/wormhole/internal/wormhole_internal.h
+message(STATUS "WORMHOLE_PUBLIC_HEADERS ${WORMHOLE_PUBLIC_HEADERS}")
+
+NestingFileSearch (WORMHOLE_PRIVATE_HEADERS
+    EXTENSION ".h"
+    DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/wormhole/internal"
 )
 
-set(WORMHOLE_SOURCES
-    src/wormhole.cc
-    src/internal/wormhole_internal.cc
+NestingFileSearch (WORMHOLE_SOURCES
+    RECURSIVE
+    EXTENSION ".cc"
+    DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/src"
 )
-
 
 target_sources(wormhole
     PUBLIC 
@@ -53,6 +57,7 @@ if(WORMHOLE_INSTALL)
     install(
         TARGETS wormhole
         EXPORT wormhole-targets
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
         LIBRARY DESTINATION ${CMAKE_INSTALL_BINDIR}
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
         PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/wormhole

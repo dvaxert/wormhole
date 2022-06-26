@@ -1,4 +1,4 @@
 
-add_executable(example main.cc)
+add_executable (example main.cc)
 
-target_link_libraries(example wormhole)
+target_link_libraries (example wormhole)
