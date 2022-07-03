@@ -13,19 +13,22 @@ message (STATUS "WORMHOLE_LIBRARY_TYPE - ${WORMHOLE_LIBRARY_TYPE}")
 # Describing the list of source files
 
 NestingFileSearch (WORMHOLE_PUBLIC_HEADERS
-    EXTENSION ".h"
-    DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include"
+    RECURSIVE
+    EXTENSIONS ".h"
+    DIRECTORIES "${CMAKE_CURRENT_SOURCE_DIR}/include"
+    EXCLUDE_PATTERNS ".*/internal/.*"
 )
 
 NestingFileSearch (WORMHOLE_PRIVATE_HEADERS
-    EXTENSION ".h"
-    DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/wormhole/internal"
+    RECURSIVE
+    EXTENSIONS ".h"
+    DIRECTORIES "${CMAKE_CURRENT_SOURCE_DIR}/include/wormhole/internal"
 )
 
 NestingFileSearch (WORMHOLE_SOURCES
     RECURSIVE
-    EXTENSION ".cc"
-    DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/src"
+    EXTENSIONS ".cc"
+    DIRECTORIES "${CMAKE_CURRENT_SOURCE_DIR}/src"
 )
 
 target_sources(wormhole
@@ -42,11 +45,12 @@ target_include_directories(wormhole
         $<INSTALL_INTERFACE:include>
 )
 
-set_target_properties(wormhole
-    PROPERTIES
-        PUBLIC_HEADER ${WORMHOLE_PUBLIC_HEADERS}
-)
-
+foreach(HEADER ${WORMHOLE_PUBLIC_HEADERS})
+    set_target_properties(wormhole
+        PROPERTIES
+            PUBLIC_HEADER ${HEADER}
+    )
+endforeach()
 
 # Create an installation target
 
