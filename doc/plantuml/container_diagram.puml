@@ -1,0 +1,45 @@
+@startuml
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+!define FONTAWESOME https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/font-awesome-5
+!include FONTAWESOME/users.puml
+!include FONTAWESOME/sync_alt.puml
+!include FONTAWESOME/server.puml
+!include FONTAWESOME/laptop.puml
+!include FONTAWESOME/database.puml
+!include FONTAWESOME/window_maximize.puml
+!include FONTAWESOME/network_wired.puml
+!include FONTAWESOME/cog.puml
+!include FONTAWESOME/arrows_alt_h.puml
+
+Person(сlient, "Client", "One or many users who want to connect to the host", $sprite="users")
+Person(host, "Host", "The user who wants to establish the connection and is the host of the connection")
+System_Ext(signal_server, "Signal Server", "An external service used for wormhole applications to communicate with each other", $sprite="sync_alt")
+System_Ext(webrtc_server, "WebRTC Server", "External WebRTC server used to establish p2p connection", $sprite="server")
+
+System_Boundary(wormhole, "Wormhole") {
+    Container(core, "Application Core", "C++", "Controls the basic logic of the application", $sprite="cog")
+    Container(signal_client, "Signal Client", "C++", "Interacts with signal server", $sprite="arrows_alt_h")
+    Container(webrtc_client, "WebRTC Client", "C++", "Interacts with WebRTC servers", $sprite="arrows_alt_h")
+    Container(db, "Internal Database", "sqlite", "Stores user data", $sprite="database")
+    Container(ui, "User Interface", "c++, Qt6, qml", "Used to display information and interact with the user", $sprite="window_maximize")
+    Container(driver, "Operation system driver", "C++", "Interfaces with the operating system to emulate a physical connection", $sprite="network_wired")
+}
+
+BiRel_Right(сlient, host, "Use p2p connection")
+
+Rel_Down(сlient, ui, "Requests a connection to the host")
+Rel_Down(host, ui, "Approves the client connection")
+
+Rel_Down(ui, core, "Reports the user's actions")
+
+Rel_Right(core, webrtc_client, "Used to set up a p2p connection")
+Rel_Left(core, signal_client, "Communicates the user's intentions and status")
+Rel_Down(core, db, "Stores data used in the work process")
+Rel_Down(core, driver, "Enables connection by")
+
+Rel_Right(webrtc_client, webrtc_server, "Enables connection by")
+Rel_Left(signal_client, signal_server, "Enables connection by")
+
+SHOW_LEGEND()
+@enduml
