@@ -20,7 +20,7 @@ include (MakeTarget)
 # Project build options
 ########################################################################################################################
 
-ProjectOption (BUILD_APP           "Build the application when building the project" ON)
+ProjectOption (BUILD_APPS          "Build the application when building the project" ON)
 ProjectOption (BUILD_SHARED_LIBS   "Build the project as a dynamic library"          ON)
 ProjectOption (BUILD_DRIVER        "Build the driver when building the project"      ON)
 ProjectOption (BUILD_TESTING       "Build tests for the project"                     OFF)
@@ -89,7 +89,7 @@ message (STATUS "Configuring wormhole core")
 add_subdirectory (core)
 add_subdirectory (components)
 
-if (BUILD_APP)
+if (BUILD_APPS)
     add_subdirectory (app)
 endif ()
 

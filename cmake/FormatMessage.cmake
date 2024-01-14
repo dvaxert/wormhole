@@ -1,34 +1,55 @@
-
-
-# {len:align:filler}
+########################################################################################################################
+#
+# Function for sending formatted messages to the terminal with the ability to substitute arguments according to the
+# template.
+#
+# Opportunities:
+# * Specifying the length of the argument to be inserted
+# * Specifying the alignment of the argument
+# * Specifies the filler to be used to fill in missing characters
+#
+# Example:
+# FormatMessage (NOTICE "{10:right:*} {20:left:-} {30:center:!}" "Hello" "world" "!")
+#
+# The result of the call on the command line:
+# "*****Hello world--------------- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+#
+# Template format:
+# {lenght:align:filler}
+#
+# Template arguments can be omitted, but delimiters must be specified.
+#
+# The following variants of the template are considered correct:
+# {} {:} {::} {::!} {1::!} {:left:!} {10} {10:left}
+#
+# Important! The number of arguments that are substituted must always match the number of arguments passed.
+# The function ignores empty arguments. Maybe this will be fixed in the future.
+#
+# Call arguments:
+# * TYPE - The argument corresponding to the [<mode>] argument in the message function.
+# * FORMAT - Template in which the arguments will be substituted
+# All subsequent arguments will be taken as arguments to populate the template
+#
+########################################################################################################################
 
 function (FormatMessage TYPE FORMAT)
     unset (ARGUMENTS)
     foreach (VALUE ${ARGN})
         list (APPEND ARGUMENTS ${VALUE})
     endforeach ()
-
-    if ("${TYPE}" STREQUAL "NONE")
-        set (TYPE "")
-    endif ()
     
-    # Расчитываем требуемое количество аргументов
+    # Calculate the required number of arguments
 
     string (REGEX MATCHALL "[{][^{]*[}]" MATCH_LIST "${FORMAT}")
     list (LENGTH MATCH_LIST FORMAT_SIZE)
 
-    # Расчитываем переданное количество аргументов
+    # Calculate the number of arguments passed
+
     list (LENGTH ARGUMENTS ARGUMENTS_COUNT)
 
-    # Если количество не совпадает то сообщаем об ошибке (перевернуть условие)
-    if (NOT ${FORMAT_SIZE} EQUAL ${ARGUMENTS_COUNT})
-        message (AUTHOR_WARNING "The message format does not match the number of arguments: "
-                                "FORMAT: \"${FORMAT}\", "
-                                "FORMAT_SIZE: ${FORMAT_SIZE}, "
-                                "ARGUMENTS: \"${ARGN}\", "
-                                "ARGUMENTS_COUNT: ${ARGUMENTS_COUNT}"
-        )
-    else ()
+    # If the number of arguments matches, we try to fill the template
+
+    if (${FORMAT_SIZE} EQUAL ${ARGUMENTS_COUNT})
         string (REGEX MATCHALL "[{][^{]*[}]" MATCH_LIST "${FORMAT}")
         set (RESULT ${FORMAT})
         
@@ -40,7 +61,8 @@ function (FormatMessage TYPE FORMAT)
             math (EXPR REPLACE_END "${REPLACE_BEGIN} + ${MATCH_LEN}" OUTPUT_FORMAT DECIMAL)
 
 
-            # Получаем префиксную и постфиксную строки из оригинальной строки
+            # Get the prefix and postfix strings from the original string
+
             string (SUBSTRING ${RESULT} 0 ${REPLACE_BEGIN} RESULT_PREFIX)
             string (SUBSTRING ${RESULT} ${REPLACE_END} -1 RESULT_POSTFIX)
 
@@ -50,12 +72,13 @@ function (FormatMessage TYPE FORMAT)
 
             ParseFormatString("${FORMAT_STRING}" LEN_VALUE ALIGN_VALUE FILLER_VALUE)
 
-            # Получаем и подготавливаем значение к подстановке
+            # Obtaining and preparing the value for substitution
             list (GET ARGUMENTS ${CURRENT_INDEX} CURRENT_ARGUMENT)
             string (LENGTH ${CURRENT_ARGUMENT} CURRENT_ARGUMENT_LEN)
 
 
-            # Есть описание формата
+            # if there is a format description, fill in the template
+
             if ("${FORMAT_STRING_LEN}" GREATER "0")
                 if (NOT DEFINED LEN_VALUE)
                     set (LEN_VALUE ${CURRENT_ARGUMENT_LEN})
@@ -73,18 +96,38 @@ function (FormatMessage TYPE FORMAT)
             endif ()
 
 
-            # Заменяем шаблон значением
+            # Replace the template with the value
+
             set (RESULT ${RESULT_PREFIX}${CURRENT_ARGUMENT}${RESULT_POSTFIX})
 
 
-            # Увеличиваем счетчик элементов
+            # Increase the element count
+
             math (EXPR CURRENT_INDEX "${CURRENT_INDEX} + 1" OUTPUT_FORMAT DECIMAL)
         endforeach ()
 
         message (${TYPE} ${RESULT})
+
+    # If the number of arguments does not match, we report an error
+
+    else ()
+        message (WARNING "The message format does not match the number of arguments: "
+                            "FORMAT: \"${FORMAT}\", "
+                            "FORMAT_SIZE: ${FORMAT_SIZE}, "
+                            "ARGUMENTS: \"${ARGN}\", "
+                            "ARGUMENTS_COUNT: ${ARGUMENTS_COUNT}"
+        )
     endif ()
 
 endfunction ()
+
+########################################################################################################################
+#
+# This macro is designed to parse a template of text
+#
+# This is an internal macro for use in the FormatMessage function do not use it.
+#
+########################################################################################################################
 
 macro (ParseFormatString FORMAT_STRING OUT_LEN OUT_ALIGN OUT_FILLER)
     unset (${OUT_LEN})
@@ -112,21 +155,29 @@ macro (ParseFormatString FORMAT_STRING OUT_LEN OUT_ALIGN OUT_FILLER)
                 math (EXPR PFS_FILLER_VALUE_BEGIN_POSITION "${PFS_SECOND_SEPARATOR_POSITION} + 1" OUTPUT_FORMAT DECIMAL)
                 
                 if ("${PFS_SECOND_SEPARATOR_POSITION}" GREATER "0")
-                    string (SUBSTRING ${PFS_POST_FIRST_SEPARATOR_STRING} 0 ${PFS_SECOND_SEPARATOR_POSITION} PFS_ALIGN_VALUE)
+                    string (SUBSTRING ${PFS_POST_FIRST_SEPARATOR_STRING} 
+                        0 ${PFS_SECOND_SEPARATOR_POSITION} 
+                        PFS_ALIGN_VALUE
+                    )
                     
-                    if (NOT ${PFS_ALIGN_VALUE} STREQUAL "left" AND NOT ${PFS_ALIGN_VALUE} STREQUAL "right" AND NOT ${PFS_ALIGN_VALUE} STREQUAL "center")
-                        message (AUTHOR_WARNING "Align can only have the values left, right or center")
+                    if (NOT ${PFS_ALIGN_VALUE} STREQUAL "left" AND
+                        NOT ${PFS_ALIGN_VALUE} STREQUAL "right" AND
+                        NOT ${PFS_ALIGN_VALUE} STREQUAL "center")
+                        message (WARNING "Align can only have the values left, right or center")
                     else ()
                         set (${OUT_ALIGN} ${PFS_ALIGN_VALUE})
                     endif ()
                 endif ()
                     
-                string (SUBSTRING ${PFS_POST_FIRST_SEPARATOR_STRING} ${PFS_FILLER_VALUE_BEGIN_POSITION} -1 PFS_POST_SECOND_SEPARATOR_STRING)
+                string (SUBSTRING ${PFS_POST_FIRST_SEPARATOR_STRING} 
+                    ${PFS_FILLER_VALUE_BEGIN_POSITION} -1 
+                    PFS_POST_SECOND_SEPARATOR_STRING
+                )
                 string (LENGTH "${PFS_POST_SECOND_SEPARATOR_STRING}" PFS_POST_SECOND_SEPARATOR_STRING_LEN)
                 
                 if ("${PFS_POST_SECOND_SEPARATOR_STRING_LEN}" GREATER "0")
                     if ("${PFS_POST_SECOND_SEPARATOR_STRING_LEN}" GREATER "1")
-                        message (AUTHOR_WARNING "The filler must be 1 character")
+                        message (WARNING "The filler must be 1 character")
                     else ()
                         set (${OUT_FILLER} ${PFS_POST_SECOND_SEPARATOR_STRING})
                     endif ()
@@ -136,6 +187,14 @@ macro (ParseFormatString FORMAT_STRING OUT_LEN OUT_ALIGN OUT_FILLER)
     endif ()
 
 endmacro ()
+
+########################################################################################################################
+#
+# This macro is designed to fill the template with arguments
+#
+# This is an internal macro for use in the FormatMessage function do not use it.
+#
+########################################################################################################################
 
 macro (ApplyFormat ARGUMENT LEN ALIGN FILLER OUT)
     unset (${LEN})

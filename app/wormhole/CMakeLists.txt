@@ -2,7 +2,7 @@ project(wormhole-app LANGUAGES CXX)
 
 set (${PROJECT_NAME}_SOURCES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
-# Рекурсивный поиск исходных файлов библиотеки
+# Recursive search for library source files
 
 NestingFileSearch (${PROJECT_NAME}_SOURCES
     RECURSIVE
@@ -10,7 +10,7 @@ NestingFileSearch (${PROJECT_NAME}_SOURCES
     DIRECTORIES "${${PROJECT_NAME}_SOURCES_DIR}"
 )
 
-# Создание цели для библиотеки
+# Creating a target for the application
 
 MakeTarget (
     NAME wormhole-app

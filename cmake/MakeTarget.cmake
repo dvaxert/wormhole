@@ -1,4 +1,57 @@
-
+########################################################################################################################
+#
+# Specialized function for shorter and more human-readable creation of build targets
+#
+# Example:
+# MakeTarget (
+#     NAME some-target
+#     TYPE LIBRARY
+#     ALIAS some::target
+#     HEADERS
+#         PUBLIC
+#             <Public headers>
+#         PRIVATE
+#             <Private headers>
+#     SOURCES <sources>
+#     DEPENDS <the targets on which this target depends>
+#     INCLUDE_DIRECTORIES [SYSTEM] [AFTER|BEFORE]
+#         <INTERFACE|PUBLIC|PRIVATE> [items1...]
+#         [<INTERFACE|PUBLIC|PRIVATE> [items2...] ...]
+#     LINK_LIBRARIES
+#         PUBLIC
+#             <Public link targets>
+#         PRIVATE
+#             <Private link targets>
+#     PROPERTIES
+#         item1 value1...
+#     DEFINITIONS
+#         "key1=value1"...
+# )
+#
+# This call will create a library named some-target, the library type will be obtained from the BUILD_SHARED_LIBS
+# option. An alias some::target will be created pointing to this library. Otherwise, all other actions are similar
+# to the argument names.
+#
+# Important!
+# * All arguments passed to LINK_LIBRARIES are automatically placed in DEPENDS and do not need to be duplicated.
+# * If the target type is TEST, it will automatically be set to run from CTest.
+# * Arguments passed to the INCLUDE_DIRECTORIES field are completely similar to the target_include_directories()
+#   call.
+# * The PUBLIC_HEADER property is automatically set for all public headers.
+#
+# Call arguments:
+# * NAME - Target Name
+# * TYPE - Target Type: APPLICATION, LIBRARY, TEST
+# * ALIAS - Alias for this target
+# * HEADERS - Project header files
+# * SOURCES - Project source files
+# * DEPENDS - Targets that must be compiled before this target can be compiled
+# * INCLUDE_DIRECTORIES - Directories to be connected to this target
+# * LINK_LIBRARIES - Targets linkable to this target
+# * PROPERTIES - The properties of this target
+# * DEFINITIONS - Definitions of this target
+#
+########################################################################################################################
 
 macro (MakeTarget)
     set (options "")
@@ -18,25 +71,25 @@ macro (MakeTarget)
     )
     cmake_parse_arguments (MT "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
-    # Если переданы неизвестные аргументы
+    # Report an error if unknown arguments are passed
 
     if (MT_UNPARSED_ARGUMENTS)
         message(FATAL_ERROR "Unknown keywords given to MakeTarget(): ${MT_UNPARSED_ARGUMENTS}")
     endif ()
 
-    # Если не передано имя цели
+    # Report an error if no target name is passed
 
     if (NOT DEFINED MT_NAME)
         message(FATAL_ERROR "You must enter the name of the target")
     endif ()
 
-    # Если не передан тип таргета
+    # Report an error if the target type is not passed
 
     if (NOT DEFINED MT_TYPE)
         message(FATAL_ERROR "You must specify the target type APPLICATION, LIBRARY or TEST")
     endif ()
     
-    # Если передан некорректный тип таргета
+    # Report an error if an invalid target type is passed
 
     if (NOT "${MT_TYPE}" STREQUAL "APPLICATION" AND
         NOT "${MT_TYPE}" STREQUAL "LIBRARY" AND
@@ -44,17 +97,17 @@ macro (MakeTarget)
         message(FATAL_ERROR "You must specify the target type APPLICATION, LIBRARY or TEST")
     endif ()
 
-    # Создаем таргет
+    # Creating a target
 
     if ("${MT_TYPE}" STREQUAL "APPLICATION" OR "${MT_TYPE}" STREQUAL "TEST")
         add_executable (${MT_NAME})
         
         if (DEFINED MT_ALIAS)
-            message (AUTHOR_WARNING "ALIAS cannot be used for a executable file")
+            message (WARNING "ALIAS cannot be used for a executable file")
         endif ()
     else ()
 
-        # Расчет типа библиотеки
+        # Library type calculation
 
         if (BUILD_SHARED_LIBS)
             set (MT_LIBRARY_TYPE SHARED)
@@ -64,14 +117,14 @@ macro (MakeTarget)
 
         add_library (${MT_NAME} ${MT_LIBRARY_TYPE})
         
-        # Создание алиаса
+        # Creating an alias
 
         if (NOT "${MT_ALIAS}" STREQUAL "")
             add_library (${MT_ALIAS} ALIAS ${MT_NAME})
         endif ()
     endif ()
 
-    # Парсим хедеры
+    # Parsing of parameters passed to HEADERS
 
     if (NOT "${MT_HEADERS}" STREQUAL "")
         set (options "")
@@ -100,7 +153,7 @@ macro (MakeTarget)
             ${MT_SOURCES}
     )
 
-    # Подключение директорий
+    # Including directories
 
     if (NOT "${MT_INCLUDE_DIRECTORIES}" STREQUAL "")
         set (options SYSTEM AFTER BEFORE)
@@ -128,31 +181,31 @@ macro (MakeTarget)
         )
     endif ()
 
-    # Подключение зависимостей компиляции
+    # Connecting compilation dependencies
 
     if (NOT "${MT_DEPENDS}" STREQUAL "")
         add_dependencies (${MT_NAME} ${MT_DEPENDS} ${MT_LINK_LIBRARIES})
     endif ()
 
-    # Линковка со внешними библиотеками
+    # Linking to external libraries
 
     if (NOT "${MT_LINK_LIBRARIES}" STREQUAL "")
         target_link_libraries (${MT_NAME} ${MT_LINK_LIBRARIES})
     endif ()
 
-    # Установка значений
+    # Setting properties
 
     if (NOT "${MT_PROPERTIES}" STREQUAL "")
         set_target_properties (${MT_NAME} PROPERTIES ${MT_PROPERTIES})
     endif ()
 
-    # Установка значений компиляции
+    # Setting compilation values
 
     if (NOT "${MT_DEFINITIONS}" STREQUAL "")
         add_compile_definitions (${MT_NAME} ${MT_DEFINITIONS})
     endif ()
 
-    # Настраиваем запуск через CTest если цель - тест
+    # Configure CTest startup if the goal is to test
 
     if ("${MT_TYPE}" STREQUAL "TEST")
         add_test (
@@ -160,21 +213,4 @@ macro (MakeTarget)
             COMMAND $<TARGET_FILE:${MT_NAME}>
         )
     endif ()
-
-    #message (STATUS "MT_NAME - ${MT_NAME}" )
-    #message (STATUS "MT_TYPE - ${MT_TYPE}" )
-    #message (STATUS "MT_LIBRARY_TYPE - ${MT_LIBRARY_TYPE}" )
-    #message (STATUS "MT_ALIAS - ${MT_ALIAS}" )
-    #message (STATUS "MT_HEADERS_PUBLIC - ${MT_HEADERS_PUBLIC}")
-    #message (STATUS "MT_HEADERS_PRIVATE - ${MT_HEADERS_PRIVATE}")
-    #message (STATUS "MT_SOURCES - ${MT_SOURCES}" )
-    #message (STATUS "MT_DEPENDS - ${MT_DEPENDS}" )
-    #message (STATUS "MT_INCLUDE_DIRECTORIES - ${MT_INCLUDE_DIRECTORIES}" )
-    #message (STATUS "MT_LINK_LIBRARIES - ${MT_LINK_LIBRARIES}" )
-    #message (STATUS "MT_PROPERTIES - ${MT_PROPERTIES}" )
-    #message (STATUS "MT_DEFINITIONS - ${MT_DEFINITIONS}" )
-    #message (STATUS "MT_INCLUDE_DIRECTORIES_ARGUMENTS - ${MT_INCLUDE_DIRECTORIES_ARGUMENTS}" )
-    #message (STATUS "MT_INCLUDE_DIRECTORIES_INTERFACE - ${MT_INCLUDE_DIRECTORIES_INTERFACE}" )
-    #message (STATUS "MT_INCLUDE_DIRECTORIES_PUBLIC - ${MT_INCLUDE_DIRECTORIES_PUBLIC}" )
-    #message (STATUS "MT_INCLUDE_DIRECTORIES_PRIVATE - ${MT_INCLUDE_DIRECTORIES_PRIVATE}" )
 endmacro ()
