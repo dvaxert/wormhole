@@ -1,0 +1,23 @@
+@startuml
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+!define FONTAWESOME https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/font-awesome-5
+!include FONTAWESOME/users.puml
+!include FONTAWESOME/sync_alt.puml
+!include FONTAWESOME/server.puml
+!include FONTAWESOME/window_maximize.puml
+
+Person(сlient, "Client", "One or many users who want to connect to the host", $sprite="users")
+Person(host, "Host", "The user who wants to establish the connection and is the host of the connection")
+System(wormhole, "Wormhole", "An application under development that is used to establish a connection between users", $sprite="window_maximize")
+System_Ext(signal_server, "Signal Server", "An external service used for wormhole applications to communicate with each other", $sprite="sync_alt")
+System_Ext(webrtc_server, "WebRTC Server", "External WebRTC server used to establish p2p connection", $sprite="server")
+
+BiRel_Right(сlient, host, "Use p2p connection")
+Rel_Down(сlient, wormhole, "Uses for connection")
+Rel_Down(host, wormhole, "Enables connection by")
+Rel_Left(wormhole, signal_server, "Communicates with another wormhole application using", "http")
+Rel_Right(wormhole, webrtc_server, "Establishes a connection using", "WebRTC")
+
+SHOW_LEGEND()
+@enduml
