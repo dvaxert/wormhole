@@ -10,7 +10,8 @@
 !include FONTAWESOME/window_maximize.puml
 !include FONTAWESOME/network_wired.puml
 !include FONTAWESOME/cog.puml
-!include FONTAWESOME/arrows_alt_h.puml
+!include FONTAWESOME/wifi.puml
+!include FONTAWESOME/bell.puml
 
 Person(сlient, "Client", "One or many users who want to connect to the host", $sprite="users")
 Person(host, "Host", "The user who wants to establish the connection and is the host of the connection")
@@ -19,8 +20,8 @@ System_Ext(webrtc_server, "WebRTC Server", "External WebRTC server used to estab
 
 System_Boundary(wormhole, "Wormhole") {
     Container(core, "Application Core", "C++", "Controls the basic logic of the application", $sprite="cog")
-    Container(signal_client, "Signal Client", "C++", "Interacts with signal server", $sprite="arrows_alt_h")
-    Container(webrtc_client, "WebRTC Client", "C++", "Interacts with WebRTC servers", $sprite="arrows_alt_h")
+    Container(signal_client, "Signal Client", "C++", "Interacts with signal server", $sprite="bell")
+    Container(webrtc_client, "WebRTC Client", "C++", "Interacts with WebRTC servers", $sprite="wifi")
     Container(db, "Internal Database", "sqlite", "Stores user data", $sprite="database")
     Container(ui, "User Interface", "c++, Qt6, qml", "Used to display information and interact with the user", $sprite="window_maximize")
     Container(driver, "Operation system driver", "C++", "Interfaces with the operating system to emulate a physical connection", $sprite="network_wired")
