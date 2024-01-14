@@ -1,0 +1,43 @@
+project(wormhole-telegram-signal-client LANGUAGES CXX)
+
+set (${PROJECT_NAME}_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
+set (${PROJECT_NAME}_SOURCES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
+
+# Recursive search for library source files
+
+NestingFileSearch (${PROJECT_NAME}_HEADERS
+    RECURSIVE
+    EXTENSIONS ".h"
+    DIRECTORIES "${${PROJECT_NAME}_INCLUDE_DIR}"
+)
+
+NestingFileSearch (${PROJECT_NAME}_SOURCES
+    RECURSIVE
+    EXTENSIONS ".cc"
+    DIRECTORIES "${${PROJECT_NAME}_SOURCES_DIR}"
+)
+
+# Creating a target for the library
+
+MakeTarget (
+    NAME telegram-signal-client
+    TYPE LIBRARY
+    ALIAS wormhole::telegramsignal
+    HEADERS
+        PUBLIC
+            ${${PROJECT_NAME}_HEADERS}
+    SOURCES ${${PROJECT_NAME}_SOURCES}
+    INCLUDE_DIRECTORIES
+        $<BUILD_INTERFACE:${${PROJECT_NAME}_INCLUDE_DIR}>
+        $<INSTALL_INTERFACE:include>
+    PROPERTIES
+        OUTPUT_NAME telegramsignal
+        FOLDER components
+    LINK_LIBRARIES
+        PUBLIC
+            wormhole::core
+)
+
+if (BUILD_TESTING)
+    add_subdirectory (test)
+endif ()
