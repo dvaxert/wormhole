@@ -159,7 +159,7 @@ macro (MakeTarget)
         set (options SYSTEM AFTER BEFORE)
         set (oneValueArgs "")
         set (multiValueArgs INTERFACE PUBLIC PRIVATE)
-        cmake_parse_arguments (MT_INCLUDE_DIRECTORIES "${options}" "${oneValueArgs}" "${multiValueArgs}" ${MT_HEADERS})
+        cmake_parse_arguments (MT_INCLUDE_DIRECTORIES "${options}" "${oneValueArgs}" "${multiValueArgs}" ${MT_INCLUDE_DIRECTORIES})
 
         unset (MT_INCLUDE_DIRECTORIES_ARGUMENTS)
         if (MT_INCLUDE_DIRECTORIES_SYSTEM)

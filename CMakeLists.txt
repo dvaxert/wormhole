@@ -49,6 +49,14 @@ set (CMAKE_CXX_STANDARD_REQUIRED ON)
 set_property (GLOBAL PROPERTY LINKER_LANGUAGE CXX)
 
 ########################################################################################################################
+# Configuring project output directories
+########################################################################################################################
+
+set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set (CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set (CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib) 
+
+########################################################################################################################
 # Operation system specific project build settings
 ########################################################################################################################
 
@@ -84,6 +92,11 @@ endif ()
 ########################################################################################################################
 # Adding subprojects
 ########################################################################################################################
+
+if (BUILD_TESTING)
+    include (CTest)
+    enable_testing ()
+endif ()
 
 message (STATUS "Configuring wormhole core")
 add_subdirectory (core)
