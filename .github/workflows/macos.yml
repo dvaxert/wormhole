@@ -21,7 +21,7 @@ jobs:
         id: runvcpkg
         with:
           vcpkgDirectory: '${{github.workspace}}/vcpkg'
-          vcpkgGitCommitId: 'fd1bdf6ad343e390a5d043b23f0022b3188b5ac2'
+          vcpkgGitCommitId: '53bef8994c541b6561884a8395ea35715ece75db'
           vcpkgJsonGlob: '**/vcpkg.json'
 
       - name: Configure CMake

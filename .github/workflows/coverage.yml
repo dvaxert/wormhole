@@ -21,7 +21,7 @@ jobs:
         id: runvcpkg
         with:
           vcpkgDirectory: '${{github.workspace}}/vcpkg'
-          vcpkgGitCommitId: 'fd1bdf6ad343e390a5d043b23f0022b3188b5ac2'
+          vcpkgGitCommitId: '53bef8994c541b6561884a8395ea35715ece75db'
           vcpkgJsonGlob: '**/vcpkg.json'
 
       - name: Configure CMake
@@ -50,7 +50,7 @@ jobs:
 
       - name: Generate reports
         run: |
-          gcovr --root ${{github.workspace}}/lib --html --html-details --output ${{github.workspace}}/coverage.html
+          gcovr --root ${{github.workspace}}/ --html --html-details --output ${{github.workspace}}/coverage.html
           echo $?
 
       - name: Send reports
