@@ -1,5 +1,5 @@
 name: Static analysis
-on: pull_request
+on: [ pull_request ]
 jobs:
     job:
       runs-on: ubuntu-latest
