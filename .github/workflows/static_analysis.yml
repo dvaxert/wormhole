@@ -1,5 +1,5 @@
 name: Static analysis
-on: [ push, pull_request ]
+on: pull_request
 jobs:
     job:
       runs-on: ubuntu-latest
@@ -15,7 +15,6 @@ jobs:
             config_file: ".clang-tidy"
             include: "*.h,*.cc"
             exclude: ".*test.*"
-            pr: 1
     
         # Uploads an artefact containing clang_fixes.json
         - uses: ZedThree/clang-tidy-review/upload@v0.16.0
