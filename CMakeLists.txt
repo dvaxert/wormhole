@@ -94,7 +94,22 @@ endif ()
 ########################################################################################################################
 
 if (ENABLE_COVERAGE AND UNIX)
-    string (APPEND CMAKE_CXX_FLAGS " --coverage -g -O0")
+    string (APPEND CMAKE_CXX_FLAGS " --coverage -g")
+    
+    set (FLAG_VARS 
+        CMAKE_CXX_FLAGS 
+        CMAKE_CXX_FLAGS_DEBUG 
+        CMAKE_CXX_FLAGS_RELEASE
+        CMAKE_CXX_FLAGS_MINSIZEREL 
+        CMAKE_CXX_FLAGS_RELWITHDEBINFO
+    )
+
+    foreach (FLAG_VAR ${FLAG_VARS})
+        if (${FLAG_VAR} MATCHES "O1|O2|O3")
+            string (REGEX REPLACE "O1|O2|O3" "O0" ${FLAG_VAR} "${${FLAG_VAR}}")
+        endif ()
+    endforeach ()
+
     find_package(Threads REQUIRED)
 endif ()
 
