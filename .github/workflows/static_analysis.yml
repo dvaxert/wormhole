@@ -1,45 +1,18 @@
 name: Static analysis
 on: [ push, pull_request ]
 jobs:
-    job:
-      runs-on: ubuntu-latest
-      name: Static analysis
+  job:
+    runs-on: ubuntu-latest
+    name: Static analysis
 
-      steps:
-        - uses: actions/checkout@v4
-
-        # Optionally generate compile_commands.json
-        - uses: ZedThree/clang-tidy-review@v0.16.0
-          id: review
-          with:
-            pr: 1
-            build_dir: build
-            config_file: ".clang-tidy"
-            exclude: ".*test.*"
-            cmake_command: |
-                pip install cmake && \
-                cmake --version && \
-                git config --global --add safe.directory "$GITHUB_WORKSPACE" && \
-                cmake -S . -B ./build \
-                    -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
-                    -DBUILD_APPS=ON \
-                    -DBUILD_SHARED_LIBS=ON \
-                    -DBUILD_DRIVER=ON \
-                    -DBUILD_TESTING=OFF \
-                    -DBUILD_EXAMPLE=OFF \
-                    -DBUILD_GRAPH=OFF \
-                    -DBUILD_DOCUMENTATION=OFF \
-                    -DENABLE_INSTALL=OFF \
-                    -DENABLE_PEDANTIC=OFF \
-                    -DENABLE_WERROR=OFF \
-                    -DENABLE_COVERAGE=OFF \
-                    -DENABLE_SANITIZER=OFF \
-                    -DMSVC_STATIC_RUNTIME=OFF
-    
-        # Uploads an artefact containing clang_fixes.json
-        - uses: ZedThree/clang-tidy-review/upload@v0.16.0
-          id: upload-review
-    
-        # If there are any comments, fail the check
-        - if: steps.review.outputs.total_comments > 0
-          run: exit 1
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run clang-tidy
+        uses: HorstBaerbel/action-clang-tidy@1.2
+        # These are optional (defaults displayed)
+        with:
+          scandir: '.'
+          builddir: 'build'
+          excludedirs: 'test'
+          extensions: 'h,cc'
+          cmakeoptions: ''
