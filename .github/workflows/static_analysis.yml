@@ -1,18 +1,25 @@
 name: Static analysis
 on: [ push, pull_request ]
 jobs:
-  job:
-    runs-on: ubuntu-latest
-    name: Static analysis
+    job:
+      runs-on: ubuntu-latest
+      name: Static analysis
 
-    steps:
-      - uses: actions/checkout@v4
-      - name: Run clang-tidy
-        uses: HorstBaerbel/action-clang-tidy@1.2
-        # These are optional (defaults displayed)
-        with:
-          scandir: '.'
-          builddir: 'build'
-          excludedirs: 'test'
-          extensions: 'h,cc'
-          cmakeoptions: ''
+      steps:
+        - uses: actions/checkout@v4
+
+        # Optionally generate compile_commands.json
+        - uses: ZedThree/clang-tidy-review@v0.16.0
+          id: review
+          with:
+            config_file: ".clang-tidy"
+            exclude: ".*test.*"
+            pr: 1
+    
+        # Uploads an artefact containing clang_fixes.json
+        - uses: ZedThree/clang-tidy-review/upload@v0.16.0
+          id: upload-review
+    
+        # If there are any comments, fail the check
+        - if: steps.review.outputs.total_comments > 0
+          run: exit 1
