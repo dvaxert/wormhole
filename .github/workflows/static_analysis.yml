@@ -7,13 +7,35 @@ jobs:
 
       steps:
         - uses: actions/checkout@v4
-    
+
         # Optionally generate compile_commands.json
         - uses: ZedThree/clang-tidy-review@v0.16.0
           id: review
+          with:
+            build_dir: build
+            config_file: ".clang-tidy"
+            exclude: ".*test.*"
+            cmake_command: |
+                pip install cmake && \
+                cmake --version && \
+                git config --global --add safe.directory "$GITHUB_WORKSPACE" && \
+                cmake . -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+                        -DBUILD_APPS=ON \
+                        -DBUILD_SHARED_LIBS=ON \
+                        -DBUILD_DRIVER=ON \
+                        -DBUILD_TESTING=OFF \
+                        -DBUILD_EXAMPLE=OFF \
+                        -DBUILD_GRAPH=OFF \
+                        -DBUILD_DOCUMENTATION=OFF \
+                        -DENABLE_INSTALL=OFF \
+                        -DENABLE_PEDANTIC=OFF \
+                        -DENABLE_WERROR=OFF \
+                        -DENABLE_COVERAGE=OFF \
+                        -DENABLE_SANITIZER=OFF \
+                        -DMSVC_STATIC_RUNTIME=OFF
     
         # Uploads an artefact containing clang_fixes.json
-        - uses: ZedThree/clang-tidy-review/upload@v0.14.0
+        - uses: ZedThree/clang-tidy-review/upload@v0.16.0
           id: upload-review
     
         # If there are any comments, fail the check
