@@ -13,6 +13,7 @@ jobs:
           id: review
           with:
             config_file: ".clang-tidy"
+            include: "*.h,*.cc"
             exclude: ".*test.*"
             pr: 1
     
