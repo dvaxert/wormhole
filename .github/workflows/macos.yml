@@ -36,7 +36,7 @@ jobs:
           -DENABLE_INSTALL=OFF 
           -DENABLE_PEDANTIC=OFF 
           -DENABLE_WERROR=OFF 
-          -DENABLE_COVERAGE=ON 
+          -DENABLE_COVERAGE=OFF 
           -DENABLE_SANITIZER=OFF 
           -DMSVC_STATIC_RUNTIME=OFF 
           -DCMAKE_TOOLCHAIN_FILE=${{github.workspace}}/vcpkg/scripts/buildsystems/vcpkg.cmake'
