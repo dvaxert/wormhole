@@ -19,20 +19,22 @@ jobs:
                 pip install cmake && \
                 cmake --version && \
                 git config --global --add safe.directory "$GITHUB_WORKSPACE" && \
-                cmake . -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
-                        -DBUILD_APPS=ON \
-                        -DBUILD_SHARED_LIBS=ON \
-                        -DBUILD_DRIVER=ON \
-                        -DBUILD_TESTING=OFF \
-                        -DBUILD_EXAMPLE=OFF \
-                        -DBUILD_GRAPH=OFF \
-                        -DBUILD_DOCUMENTATION=OFF \
-                        -DENABLE_INSTALL=OFF \
-                        -DENABLE_PEDANTIC=OFF \
-                        -DENABLE_WERROR=OFF \
-                        -DENABLE_COVERAGE=OFF \
-                        -DENABLE_SANITIZER=OFF \
-                        -DMSVC_STATIC_RUNTIME=OFF
+                cmake -S . -B ./build\
+                    -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+                    -DBUILD_APPS=ON \
+                    -DBUILD_SHARED_LIBS=ON \
+                    -DBUILD_DRIVER=ON \
+                    -DBUILD_TESTING=OFF \
+                    -DBUILD_EXAMPLE=OFF \
+                    -DBUILD_GRAPH=OFF \
+                    -DBUILD_DOCUMENTATION=OFF \
+                    -DENABLE_INSTALL=OFF \
+                    -DENABLE_PEDANTIC=OFF \
+                    -DENABLE_WERROR=OFF \
+                    -DENABLE_COVERAGE=OFF \
+                    -DENABLE_SANITIZER=OFF \
+                    -DMSVC_STATIC_RUNTIME=OFF \
+                    -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
     
         # Uploads an artefact containing clang_fixes.json
         - uses: ZedThree/clang-tidy-review/upload@v0.16.0
