@@ -33,7 +33,7 @@ ProjectOption (ENABLE_WERROR                 "Handle all compiler warnings with 
 ProjectOption (ENABLE_COVERAGE               "Run coverage"                                    OFF)
 ProjectOption (ENABLE_SANITIZER              "Run static analysis"                             OFF)
 ProjectOption (MSVC_STATIC_RUNTIME           "Use static runtime on windows"                   OFF) # only for windows
-ProjectOption (CMAKE_EXPORT_COMPILE_COMMANDS "Export compile comands to compile_commands.json" OFF)
+ProjectOption (CMAKE_EXPORT_COMPILE_COMMANDS "Export compile comands to compile_commands.json" OFF) # only for generators ninja or unix makefiles
 
 ########################################################################################################################
 # Print current project settings

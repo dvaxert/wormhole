@@ -12,9 +12,9 @@ jobs:
         - uses: ZedThree/clang-tidy-review@v0.16.0
           id: review
           with:
-            config_file: ".clang-tidy"
             include: "*.h,*.cc"
             exclude: ".*test.*"
+            #config_file: ".clang-tidy"
     
         # Uploads an artefact containing clang_fixes.json
         - uses: ZedThree/clang-tidy-review/upload@v0.16.0
