@@ -46,7 +46,16 @@ ShowProjectSettings()
 
 set (CMAKE_CXX_STANDARD 17)
 set (CMAKE_CXX_STANDARD_REQUIRED ON)
+set (CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set_property (GLOBAL PROPERTY LINKER_LANGUAGE CXX)
+
+########################################################################################################################
+# Configuring project output directories
+########################################################################################################################
+
+set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set (CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set (CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib) 
 
 ########################################################################################################################
 # Operation system specific project build settings
@@ -82,10 +91,42 @@ if (MSVC) # TODO
 endif ()
 
 ########################################################################################################################
+# Enable coverage
+########################################################################################################################
+
+if (ENABLE_COVERAGE AND UNIX)
+    string (APPEND CMAKE_CXX_FLAGS " --coverage -g")
+    
+    set (FLAG_VARS 
+        CMAKE_CXX_FLAGS 
+        CMAKE_CXX_FLAGS_DEBUG 
+        CMAKE_CXX_FLAGS_RELEASE
+        CMAKE_CXX_FLAGS_MINSIZEREL 
+        CMAKE_CXX_FLAGS_RELWITHDEBINFO
+    )
+
+    foreach (FLAG_VAR ${FLAG_VARS})
+        if (${FLAG_VAR} MATCHES "O1|O2|O3")
+            string (REGEX REPLACE "O1|O2|O3" "O0" ${FLAG_VAR} "${${FLAG_VAR}}")
+        endif ()
+    endforeach ()
+
+    find_package(Threads REQUIRED)
+endif ()
+
+########################################################################################################################
+# Setting additional values for testing
+########################################################################################################################
+
+if (BUILD_TESTING)
+    include (CTest)
+    enable_testing ()
+endif ()
+
+########################################################################################################################
 # Adding subprojects
 ########################################################################################################################
 
-message (STATUS "Configuring wormhole core")
 add_subdirectory (core)
 add_subdirectory (components)
 

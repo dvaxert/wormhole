@@ -1,4 +1,4 @@
-project(wormhole-lib LANGUAGES CXX)
+﻿project(wormhole-lib LANGUAGES CXX)
 
 
 set (${PROJECT_NAME}_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
@@ -29,8 +29,8 @@ MakeTarget (
             ${${PROJECT_NAME}_HEADERS}
     SOURCES ${${PROJECT_NAME}_SOURCES}
     INCLUDE_DIRECTORIES
-        $<BUILD_INTERFACE:${${PROJECT_NAME}_INCLUDE_DIR}>
-        $<INSTALL_INTERFACE:include>
+        PUBLIC
+            ${${PROJECT_NAME}_INCLUDE_DIR}
     PROPERTIES
         OUTPUT_NAME wormhole
 )

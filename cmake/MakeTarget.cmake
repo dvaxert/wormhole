@@ -97,6 +97,16 @@ macro (MakeTarget)
         message(FATAL_ERROR "You must specify the target type APPLICATION, LIBRARY or TEST")
     endif ()
 
+    # Print message
+
+    if ("${MT_TYPE}" STREQUAL "APPLICATION")
+        message (STATUS "Comfiguring application ${MT_NAME}")
+    elseif ("${MT_TYPE}" STREQUAL "TEST")
+        message (STATUS "Comfiguring test ${MT_NAME}")
+    elseif ("${MT_TYPE}" STREQUAL "LIBRARY")
+        message (STATUS "Comfiguring library ${MT_NAME}")
+    endif ()
+
     # Creating a target
 
     if ("${MT_TYPE}" STREQUAL "APPLICATION" OR "${MT_TYPE}" STREQUAL "TEST")
@@ -159,7 +169,7 @@ macro (MakeTarget)
         set (options SYSTEM AFTER BEFORE)
         set (oneValueArgs "")
         set (multiValueArgs INTERFACE PUBLIC PRIVATE)
-        cmake_parse_arguments (MT_INCLUDE_DIRECTORIES "${options}" "${oneValueArgs}" "${multiValueArgs}" ${MT_HEADERS})
+        cmake_parse_arguments (MT_INCLUDE_DIRECTORIES "${options}" "${oneValueArgs}" "${multiValueArgs}" ${MT_INCLUDE_DIRECTORIES})
 
         unset (MT_INCLUDE_DIRECTORIES_ARGUMENTS)
         if (MT_INCLUDE_DIRECTORIES_SYSTEM)
