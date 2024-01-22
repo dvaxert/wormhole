@@ -200,7 +200,22 @@ macro (MakeTarget)
     # Linking to external libraries
 
     if (NOT "${MT_LINK_LIBRARIES}" STREQUAL "")
-        target_link_libraries (${MT_NAME} ${MT_LINK_LIBRARIES})
+        set (options "")
+        set (oneValueArgs "")
+        set (multiValueArgs INTERFACE PUBLIC PRIVATE)
+        cmake_parse_arguments (MT_LINK_LIBRARIES "${options}" "${oneValueArgs}" "${multiValueArgs}" ${MT_LINK_LIBRARIES})
+
+        target_link_libraries (${MT_NAME}
+            INTERFACE ${MT_LINK_LIBRARIES_INTERFACE}
+            PUBLIC ${MT_LINK_LIBRARIES_PUBLIC}
+            PRIVATE ${MT_LINK_LIBRARIES_PRIVATE} ${MT_LINK_LIBRARIES_UNPARSED_ARGUMENTS}
+        )
+
+        message (STATUS "MT_LINK_LIBRARIES - ${MT_LINK_LIBRARIES}")
+        message (STATUS "MT_LINK_LIBRARIES_INTERFACE - ${MT_LINK_LIBRARIES_INTERFACE}")
+        message (STATUS "MT_LINK_LIBRARIES_PUBLIC - ${MT_LINK_LIBRARIES_PUBLIC}")
+        message (STATUS "MT_LINK_LIBRARIES_PRIVATE - ${MT_LINK_LIBRARIES_PRIVATE}")
+        message (STATUS "MT_LINK_LIBRARIES_UNPARSED_ARGUMENTS - ${MT_LINK_LIBRARIES_UNPARSED_ARGUMENTS}")
     endif ()
 
     # Setting properties

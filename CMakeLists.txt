@@ -15,6 +15,7 @@ list (APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 include (NestingFileSearch)
 include (ProjectSettings)
 include (MakeTarget)
+include (GenerateDependenciesGraph)
 
 ########################################################################################################################
 # Project build options
@@ -136,4 +137,12 @@ endif ()
 
 if (BUILD_DRIVER)
     add_subdirectory (os_specific)
+endif ()
+
+if (BUILD_GRAPH)
+    GenerateDependenciesGraph (
+        NAME ${PROJECT_NAME}
+        FORMAT PNG
+        OUTPUT_PATH ${CMAKE_BINARY_DIR}/doc
+    )
 endif ()
