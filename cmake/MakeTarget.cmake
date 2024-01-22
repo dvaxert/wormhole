@@ -97,6 +97,16 @@ macro (MakeTarget)
         message(FATAL_ERROR "You must specify the target type APPLICATION, LIBRARY or TEST")
     endif ()
 
+    # Print message
+
+    if ("${MT_TYPE}" STREQUAL "APPLICATION")
+        message (STATUS "Comfiguring application ${MT_NAME}")
+    elseif ("${MT_TYPE}" STREQUAL "TEST")
+        message (STATUS "Comfiguring test ${MT_NAME}")
+    elseif ("${MT_TYPE}" STREQUAL "LIBRARY")
+        message (STATUS "Comfiguring library ${MT_NAME}")
+    endif ()
+
     # Creating a target
 
     if ("${MT_TYPE}" STREQUAL "APPLICATION" OR "${MT_TYPE}" STREQUAL "TEST")
