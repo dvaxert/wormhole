@@ -8,18 +8,40 @@ jobs:
       steps:
         - uses: actions/checkout@v4
 
+        # Install required programs
+        - name: Install programs
+          run: sudo apt-get install -y g++ cmake libgtest-dev clang clang-tidy
+          
         # Optionally generate compile_commands.json
-        - uses: ZedThree/clang-tidy-review@v0.16.0
-          id: review
-          with:
-            include: "*.h,*.cc"
-            exclude: ".*test.*"
-            #config_file: ".clang-tidy"
-    
-        # Uploads an artefact containing clang_fixes.json
-        - uses: ZedThree/clang-tidy-review/upload@v0.16.0
-          id: upload-review
-    
-        # If there are any comments, fail the check
-        - if: steps.review.outputs.total_comments > 0
-          run: exit 1
+        - name: Generate project
+          run: cmake -S ${{github.workspace}} -B ${{github.workspace}}/build -G "Unix Makefiles" \
+            -DBUILD_APPS=ON \
+            -DBUILD_SHARED_LIBS=ON \
+            -DBUILD_DRIVER=ON \
+            -DBUILD_TESTING=ON \
+            -DBUILD_EXAMPLE=OFF \
+            -DBUILD_GRAPH=OFF \
+            -DBUILD_DOCUMENTATION=OFF \
+            -DENABLE_INSTALL=OFF \
+            -DENABLE_PEDANTIC=OFF \
+            -DENABLE_WERROR=OFF \
+            -DENABLE_COVERAGE=OFF \
+            -DENABLE_SANITIZER=OFF \
+            -DMSVC_STATIC_RUNTIME=OFF \
+            -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+
+        # Search for checking files
+        - name: Search files
+          run: |
+            H_FILES=$(find ${{github.workspace}} -name "*.h" \
+              | grep --ignore-case --invert-match -E "(.*test.*)|(.*windows.*)|(.*vcpkg.*)") && \
+            CC_FILES=$(find ${{github.workspace}} -name "*.cc" \
+              | grep --ignore-case --invert-match -E "(.*test.*)|(.*windows.*)|(.*vcpkg.*)")
+
+        # Run clang-tidy check
+        - name: Run check
+          run: |
+            clang-tidy \
+              --config-file=".clang-tidy" \
+              -p "${{github.workspace}}/build" \
+              ${H_FILES} ${CC_FILES}
