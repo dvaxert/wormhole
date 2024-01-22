@@ -33,7 +33,6 @@ ProjectOption (ENABLE_WERROR                 "Handle all compiler warnings with 
 ProjectOption (ENABLE_COVERAGE               "Run coverage"                                    OFF)
 ProjectOption (ENABLE_SANITIZER              "Run static analysis"                             OFF)
 ProjectOption (MSVC_STATIC_RUNTIME           "Use static runtime on windows"                   OFF) # only for windows
-ProjectOption (CMAKE_EXPORT_COMPILE_COMMANDS "Export compile comands to compile_commands.json" OFF) # only for generators ninja or unix makefiles
 
 ########################################################################################################################
 # Print current project settings
@@ -47,6 +46,7 @@ ShowProjectSettings()
 
 set (CMAKE_CXX_STANDARD 17)
 set (CMAKE_CXX_STANDARD_REQUIRED ON)
+set (CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE FORCE)
 set_property (GLOBAL PROPERTY LINKER_LANGUAGE CXX)
 
 ########################################################################################################################
