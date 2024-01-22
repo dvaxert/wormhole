@@ -1,0 +1,44 @@
+name: Static analysis
+on: [ pull_request ]
+jobs:
+    job:
+      runs-on: ubuntu-latest
+      name: Static analysis
+
+      steps:
+        - name: Clean
+          run: rm -rf ${{github.workspace}} && mkdir ${{github.workspace}}
+
+        - uses: actions/checkout@v4
+
+        # Install required programs
+        - name: Install programs
+          run: sudo apt-get install -y g++ cmake libgtest-dev clang clang-tidy
+          
+        # Optionally generate compile_commands.json
+        - name: Generate project
+          run: cmake -S ${{github.workspace}} -B ${{github.workspace}}/build -G "Unix Makefiles" \
+            -DBUILD_APPS=ON \
+            -DBUILD_SHARED_LIBS=ON \
+            -DBUILD_DRIVER=ON \
+            -DBUILD_TESTING=OFF \
+            -DBUILD_EXAMPLE=OFF \
+            -DBUILD_GRAPH=OFF \
+            -DBUILD_DOCUMENTATION=OFF \
+            -DENABLE_INSTALL=OFF \
+            -DENABLE_PEDANTIC=OFF \
+            -DENABLE_WERROR=OFF \
+            -DENABLE_COVERAGE=OFF \
+            -DENABLE_SANITIZER=OFF
+
+        # Run clang-tidy check
+        - name: Run check
+          run: |
+            H_FILES=$(find ${{github.workspace}} -name "*.h" \
+              | grep --ignore-case --invert-match -E "(.*test.*)|(.*windows.*)|(.*vcpkg.*)") && \
+            CC_FILES=$(find ${{github.workspace}} -name "*.cc" \
+              | grep --ignore-case --invert-match -E "(.*test.*)|(.*windows.*)|(.*vcpkg.*)") && \
+            clang-tidy \
+              --config-file=".clang-tidy" \
+              -p "${{github.workspace}}/build" \
+              ${H_FILES} ${CC_FILES}

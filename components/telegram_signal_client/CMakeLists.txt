@@ -1,4 +1,4 @@
-project(wormhole-telegram-signal-client LANGUAGES CXX)
+﻿project(wormhole-telegram-signal-client LANGUAGES CXX)
 
 set (${PROJECT_NAME}_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
 set (${PROJECT_NAME}_SOURCES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
@@ -28,8 +28,8 @@ MakeTarget (
             ${${PROJECT_NAME}_HEADERS}
     SOURCES ${${PROJECT_NAME}_SOURCES}
     INCLUDE_DIRECTORIES
-        $<BUILD_INTERFACE:${${PROJECT_NAME}_INCLUDE_DIR}>
-        $<INSTALL_INTERFACE:include>
+        PUBLIC
+            ${${PROJECT_NAME}_INCLUDE_DIR}
     PROPERTIES
         OUTPUT_NAME telegramsignal
         FOLDER components

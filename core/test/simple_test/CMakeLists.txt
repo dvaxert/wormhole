@@ -13,7 +13,8 @@ MakeTarget (
     PROPERTIES
         FOLDER tests
     LINK_LIBRARIES
-        wormhole::core
-        GTest::Main
-        GTest::GTest
+        PRIVATE
+            wormhole::core
+            GTest::Main
+            GTest::GTest
 )
