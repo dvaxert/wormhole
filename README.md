@@ -5,9 +5,10 @@
 [![GitHub release](https://img.shields.io/github/release/dvaxert/wormhole.svg)](https://github.com/dvaxert/wormhole/releases/)  
 [![codecov](https://codecov.io/gh/dvaxert/wormhole/graph/badge.svg?token=HnPv7uHLGJ)](https://codecov.io/gh/dvaxert/wormhole) 
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fdvaxert%2Fwormhole.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fdvaxert%2Fwormhole?ref=badge_shield)  
-[![Windows](https://github.com/dvaxert/wormhole/actions/workflows/windows.yml/badge.svg?branch=master)](https://github.com/dvaxert/wormhole/actions/workflows/windows.yml)
-[![Linux](https://github.com/dvaxert/wormhole/actions/workflows/linux.yml/badge.svg?branch=master)](https://github.com/dvaxert/wormhole/actions/workflows/linux.yml)
-[![MacOS](https://github.com/dvaxert/wormhole/actions/workflows/macos.yml/badge.svg?branch=master)](https://github.com/dvaxert/wormhole/actions/workflows/macos.yml)
+[![Windows](https://github.com/dvaxert/wormhole/actions/workflows/windows.yml/badge.svg)](https://github.com/dvaxert/wormhole/actions/workflows/windows.yml)
+[![Linux](https://github.com/dvaxert/wormhole/actions/workflows/linux.yml/badge.svg)](https://github.com/dvaxert/wormhole/actions/workflows/linux.yml)
+[![MacOS](https://github.com/dvaxert/wormhole/actions/workflows/macos.yml/badge.svg)](https://github.com/dvaxert/wormhole/actions/workflows/macos.yml)
+[![MacOS](https://github.com/dvaxert/wormhole/actions/workflows/static_analysis.yml/badge.svg)](https://github.com/dvaxert/wormhole/actions/workflows/static_analysis.yml)
 
 # wormhole
 
