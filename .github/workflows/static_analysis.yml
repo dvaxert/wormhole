@@ -6,7 +6,9 @@ jobs:
       name: Static analysis
 
       steps:
-        - uses: AutoModality/action-clean@v1
+        - name: Clean
+          run: rm -rf ${{github.workspace}}
+
         - uses: actions/checkout@v4
 
         # Install required programs
