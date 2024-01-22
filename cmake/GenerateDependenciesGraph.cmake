@@ -12,6 +12,8 @@
 # As a result, the build will generate an image file in FORMAT format named NAME and it will be saved to the OUTPUT_PATH
 # path.
 #
+# Available output formats: PNG, JPG, GIF, SVG, SVGZ, FIG, MIF, HPGL, PCL, IMAP, CMAPX, ISMAP, CMAP
+#
 # Call arguments:
 # * NAME - Output file name
 # * FORMAT - The format in which you want to save the image
