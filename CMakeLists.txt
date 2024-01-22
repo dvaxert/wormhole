@@ -20,20 +20,20 @@ include (MakeTarget)
 # Project build options
 ########################################################################################################################
 
-ProjectOption (BUILD_APPS                    "Build the application when building the project" ON)
-ProjectOption (BUILD_SHARED_LIBS             "Build the project as a dynamic library"          ON)
-ProjectOption (BUILD_DRIVER                  "Build the driver when building the project"      ON)
-ProjectOption (BUILD_TESTING                 "Build tests for the project"                     OFF)
-ProjectOption (BUILD_EXAMPLE                 "Build examples for a project"                    OFF)
-ProjectOption (BUILD_GRAPH                   "Build graph of dependencies"                     OFF)
-ProjectOption (BUILD_DOCUMENTATION           "Generate documentation when building a project"  OFF)
-ProjectOption (ENABLE_INSTALL                "Generate a target for project installation"      OFF)
-ProjectOption (ENABLE_PEDANTIC               "Enable the display of additional warnings"       OFF)
-ProjectOption (ENABLE_WERROR                 "Handle all compiler warnings with errors"        OFF)
-ProjectOption (ENABLE_COVERAGE               "Run coverage"                                    OFF)
-ProjectOption (ENABLE_SANITIZER              "Run static analysis"                             OFF)
-ProjectOption (MSVC_STATIC_RUNTIME           "Use static runtime on windows"                   OFF) # only for windows
-ProjectOption (CMAKE_EXPORT_COMPILE_COMMANDS "Export compile comands to compile_commands.json" OFF) # only for generators ninja or unix makefiles
+ProjectOption (BUILD_APPS                  "Build the application when building the project" ON)
+ProjectOption (BUILD_SHARED_LIBS           "Build the project as a dynamic library"          ON)
+ProjectOption (BUILD_DRIVER                "Build the driver when building the project"      ON)
+ProjectOption (BUILD_TESTING               "Build tests for the project"                     OFF)
+ProjectOption (BUILD_EXAMPLE               "Build examples for a project"                    OFF)
+ProjectOption (BUILD_GRAPH                 "Build graph of dependencies"                     OFF)
+ProjectOption (BUILD_DOCUMENTATION         "Generate documentation when building a project"  OFF)
+ProjectOption (ENABLE_INSTALL              "Generate a target for project installation"      OFF)
+ProjectOption (ENABLE_PEDANTIC             "Enable the display of additional warnings"       OFF)
+ProjectOption (ENABLE_WERROR               "Handle all compiler warnings with errors"        OFF)
+ProjectOption (ENABLE_COVERAGE             "Run coverage"                                    OFF)
+ProjectOption (ENABLE_SANITIZER            "Run static analysis"                             OFF)
+ProjectOption (MSVC_STATIC_RUNTIME         "Use static runtime on windows"                   OFF) # only for windows
+ProjectOption (BUILD_COMPILE_COMMANDS_JSON "Export compile comands to compile_commands.json" OFF) # only for generators ninja or unix makefiles
 
 ########################################################################################################################
 # Print current project settings
@@ -137,4 +137,8 @@ endif ()
 
 if (BUILD_DRIVER)
     add_subdirectory (os_specific)
+endif ()
+
+if (BUILD_COMPILE_COMMANDS_JSON)
+    set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE INTERNAL "")
 endif ()
