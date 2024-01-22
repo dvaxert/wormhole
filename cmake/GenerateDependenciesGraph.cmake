@@ -9,12 +9,13 @@
 #   OUTPUT_PATH ${CMAKE_BINARY_DIR}
 # )
 #
-#
+# As a result, the build will generate an image file in FORMAT format named NAME and it will be saved to the OUTPUT_PATH
+# path.
 #
 # Call arguments:
-# * TYPE - The argument corresponding to the [<mode>] argument in the message function.
-# * FORMAT - Template in which the arguments will be substituted
-# All subsequent arguments will be taken as arguments to populate the template
+# * NAME - Output file name
+# * FORMAT - The format in which you want to save the image
+# * OUTPUT_PATH - The path where you want to save the generated file
 #
 ########################################################################################################################
 
@@ -51,20 +52,20 @@ if (DOT_EXECUTABLE)
 
         set (GDG_CORRECT_FORMATS PNG JPG GIF SVG SVGZ FIG MIF HPGL PCL IMAP CMAPX ISMAP CMAP)
         set (GDG_IS_FORMAT_CORRECT FALSE)
-        foreach(VAL ${GDG_CORRECT_FORMATS})
+        foreach (VAL ${GDG_CORRECT_FORMATS})
             if ("${VAL}" STREQUAL "${GDG_FORMAT}")
                 set (GDG_IS_FORMAT_CORRECT TRUE)
             endif ()
-        endforeach()
+        endforeach ()
         
         if (NOT ${GDG_IS_FORMAT_CORRECT})
             message (FATAL_ERROR 
                      "An incorrect file format was passed to the GenerateDependenciesGraph() function: ${GDG_FORMAT}")
         endif ()
 
-        string(TOLOWER "${GDG_FORMAT}" GDG_OUTPUT_FORMAT)
+        string (TOLOWER "${GDG_FORMAT}" GDG_OUTPUT_FORMAT)
 
-        add_custom_target(dependencies-graph ALL
+        add_custom_target (dependencies-graph ALL
             COMMAND ${CMAKE_COMMAND} --graphviz=${CMAKE_BINARY_DIR}/dot/${GDG_NAME}.dot .
             COMMAND ${CMAKE_COMMAND} -E make_directory ${GDG_OUTPUT_PATH}
             COMMAND ${DOT_EXECUTABLE}
@@ -73,7 +74,7 @@ if (DOT_EXECUTABLE)
             WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
         )
         
-        set_target_properties(dependencies-graph PROPERTIES FOLDER Doc)
+        set_target_properties (dependencies-graph PROPERTIES FOLDER Doc)
 
     endfunction ()
 
