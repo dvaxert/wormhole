@@ -30,7 +30,7 @@ ProjectOption (BUILD_GRAPH         "Build graph of dependencies"                
 ProjectOption (BUILD_DOCUMENTATION "Generate documentation when building a project"  OFF)
 ProjectOption (ENABLE_INSTALL      "Generate a target for project installation"      OFF)
 ProjectOption (ENABLE_PEDANTIC     "Enable the display of additional warnings"       OFF)
-ProjectOption (ENABLE_WERROR       "Handle all compiler warnings with errors"        OFF)
+ProjectOption (ENABLE_WALL         "Handle all compiler warnings with errors"        OFF)
 ProjectOption (ENABLE_COVERAGE     "Run coverage"                                    OFF)
 ProjectOption (ENABLE_SANITIZER    "Run static analysis"                             OFF)
 ProjectOption (MSVC_STATIC_RUNTIME "Use static runtime on windows"                   OFF) # only for windows
@@ -65,6 +65,8 @@ set (CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 if (MSVC) # TODO
     set (CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON) #TODO
     set_property (GLOBAL PROPERTY USE_FOLDERS ON)
+    string (APPEND CMAKE_CXX_FLAGS " /MP")
+    string (APPEND CMAKE_CXX_FLAGS_RELEASE " /Zi")
     
     string (APPEND CMAKE_DEBUG_POSTFIX "_dbg")
 
@@ -116,6 +118,42 @@ if (ENABLE_COVERAGE AND UNIX)
 endif ()
 
 ########################################################################################################################
+# Enable Wall
+########################################################################################################################
+
+if (ENABLE_WALL)
+    if (MSVC)
+        string (APPEND CMAKE_CXX_FLAGS " /Wall")
+    elseif (UNIX)
+        string (APPEND CMAKE_CXX_FLAGS " -Wall")
+    endif ()
+endif ()
+
+########################################################################################################################
+# Enable pedantic
+########################################################################################################################
+
+if (ENABLE_PEDANTIC)
+    if (MSVC)
+        string (APPEND CMAKE_CXX_FLAGS " /W4")
+    elseif (UNIX)
+        string (APPEND CMAKE_CXX_FLAGS " -pedantic")
+    endif ()
+endif ()
+
+########################################################################################################################
+# Enable sanitizer
+########################################################################################################################
+
+if (ENABLE_SANITIZER)
+    if (MSVC)
+        string (APPEND CMAKE_CXX_FLAGS " /fsanitize=address")
+    elseif (UNIX)
+        string (APPEND CMAKE_CXX_FLAGS " -fsanitize=address")
+    endif ()
+endif ()
+
+########################################################################################################################
 # Setting additional values for testing
 ########################################################################################################################
 
@@ -145,4 +183,24 @@ if (BUILD_GRAPH)
         FORMAT PNG
         OUTPUT_PATH ${CMAKE_BINARY_DIR}/doc
     )
+endif ()
+
+if (BUILD_DOCUMENTATION)
+    find_package (Doxygen REQUIRED OPTIONAL_COMPONENTS dot mscgen dia)
+    
+    set (DOXYGEN_RECURSIVE YES)
+    set (DOXYGEN_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/doc")
+    set (DOXYGEN_GENERATE_HTML YES)
+    set (DOXYGEN_INCLUDE_FILE_PATTERNS *.h *.cc *.dox)
+    set (DOXYGEN_EXCLUDE_FILE_PATTERNS */test/*)
+
+    doxygen_add_docs (wormhole-docs
+        doc/doxyfiles
+        app
+        core
+        components
+        os_specific
+        ALL
+    )
+
 endif ()
