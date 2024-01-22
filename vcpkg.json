@@ -1,0 +1,9 @@
+{
+    "name": "wormhole",
+    "version-string": "1.0.0",
+    "homepage": "https://github.com/dvaxert/wormhole",
+    "description": "Application for creating p2p connections",
+    "dependencies": [
+      "gtest"
+    ]
+}
