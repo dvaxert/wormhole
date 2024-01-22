@@ -20,15 +20,7 @@ jobs:
             -DBUILD_DRIVER=ON \
             -DBUILD_TESTING=ON \
             -DBUILD_EXAMPLE=OFF \
-            -DBUILD_GRAPH=OFF \
-            -DBUILD_DOCUMENTATION=OFF \
-            -DENABLE_INSTALL=OFF \
-            -DENABLE_PEDANTIC=OFF \
-            -DENABLE_WERROR=OFF \
-            -DENABLE_COVERAGE=OFF \
-            -DENABLE_SANITIZER=OFF \
-            -DMSVC_STATIC_RUNTIME=OFF \
-            -DEXPORT_COMPILE_COMMANDS=ON
+            -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 
         # Run clang-tidy check
         - name: Run check
