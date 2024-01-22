@@ -14,8 +14,7 @@ jobs:
           
         # Optionally generate compile_commands.json
         - name: Generate project
-          run: cmake -S ${{github.workspace}} -B ${{github.workspace}}/build -G "Ninja" \
-            -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+          run: cmake -S ${{github.workspace}} -B ${{github.workspace}}/build -G "Ninja"\
             -DBUILD_APPS=ON \
             -DBUILD_SHARED_LIBS=ON \
             -DBUILD_DRIVER=ON \
@@ -28,7 +27,8 @@ jobs:
             -DENABLE_WERROR=OFF \
             -DENABLE_COVERAGE=OFF \
             -DENABLE_SANITIZER=OFF \
-            -DMSVC_STATIC_RUNTIME=OFF
+            -DMSVC_STATIC_RUNTIME=OFF \
+            -DEXPORT_COMPILE_COMMANDS=ON
 
         # Run clang-tidy check
         - name: Run check
