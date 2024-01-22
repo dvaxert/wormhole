@@ -30,17 +30,13 @@ jobs:
             -DMSVC_STATIC_RUNTIME=OFF \
             -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 
-        # Search for checking files
-        - name: Search files
+        # Run clang-tidy check
+        - name: Run check
           run: |
             H_FILES=$(find ${{github.workspace}} -name "*.h" \
               | grep --ignore-case --invert-match -E "(.*test.*)|(.*windows.*)|(.*vcpkg.*)") && \
             CC_FILES=$(find ${{github.workspace}} -name "*.cc" \
-              | grep --ignore-case --invert-match -E "(.*test.*)|(.*windows.*)|(.*vcpkg.*)")
-
-        # Run clang-tidy check
-        - name: Run check
-          run: |
+              | grep --ignore-case --invert-match -E "(.*test.*)|(.*windows.*)|(.*vcpkg.*)") && \
             clang-tidy \
               --config-file=".clang-tidy" \
               -p "${{github.workspace}}/build" \
